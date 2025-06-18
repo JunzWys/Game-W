@@ -366,6 +366,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6633815317963912512, guid: 18799f29df273224f81023eb1d4e0640, type: 3}
   m_PrefabInstance: {fileID: 1454421639917864269}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &467994601 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4429403420535637189, guid: 18799f29df273224f81023eb1d4e0640, type: 3}
+  m_PrefabInstance: {fileID: 1454421639917864269}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86a04664f000a164eb8709822a8c7b21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &588134888
 GameObject:
   m_ObjectHideFlags: 0
@@ -475,12 +486,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  playerController: {fileID: 0}
-  bossController: {fileID: 0}
-  statusUI: {fileID: 0}
-  gameOverPanel: {fileID: 0}
-  restartButton: {fileID: 0}
-  returnToCorridorButton: {fileID: 0}
+  playerController: {fileID: 467994601}
+  bossController: {fileID: 3306713759472276295}
+  statusUI: {fileID: 1440533313}
+  gameOverPanel: {fileID: 1786027615}
+  restartButton: {fileID: 1734814938}
+  returnToCorridorButton: {fileID: 1563182947}
   corridorSceneName: _SceneLong
 --- !u!4 &813189689
 Transform:
@@ -655,7 +666,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1edfe71ae76879341babe6e8e19a667d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHealthBarFill: {fileID: 0}
+  playerHealthBarFill: {fileID: 1494254809}
   bulletCountText: {fileID: 131033366}
   bossHealthBarFill: {fileID: 0}
 --- !u!1 &1458962809
@@ -1578,6 +1589,10 @@ PrefabInstance:
       value: PlayerCharacter_Boss
       objectReference: {fileID: 0}
     - target: {fileID: 4429403420535637189, guid: 18799f29df273224f81023eb1d4e0640, type: 3}
+      propertyPath: firePoint
+      value: 
+      objectReference: {fileID: 1880493814}
+    - target: {fileID: 4429403420535637189, guid: 18799f29df273224f81023eb1d4e0640, type: 3}
       propertyPath: moveSpeed
       value: 8
       objectReference: {fileID: 0}
@@ -1781,7 +1796,7 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 2
   contactDamage: 15
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 3148181758298710901, guid: a0b262c2181fbb44e8506cf0660edc6e, type: 3}
   projectileSpeed: 7
   fireRate: 1
   attackRange: 8
@@ -1792,7 +1807,7 @@ MonoBehaviour:
   maxY: 5
   sceneToReturnTo: _SceneLong
   delayBeforeReturn: 2
-  specialAttackFirePoint: {fileID: 0}
+  specialAttackFirePoint: {fileID: 1458962810}
   numberOfLines: 3
   projectilesPerLine: 5
   totalFanAngle: 45

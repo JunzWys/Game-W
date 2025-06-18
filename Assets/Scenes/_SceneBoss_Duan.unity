@@ -1436,6 +1436,10 @@ PrefabInstance:
       value: PlayerCharacter_Boss
       objectReference: {fileID: 0}
     - target: {fileID: 4429403420535637189, guid: 18799f29df273224f81023eb1d4e0640, type: 3}
+      propertyPath: firePoint
+      value: 
+      objectReference: {fileID: 1880493814}
+    - target: {fileID: 4429403420535637189, guid: 18799f29df273224f81023eb1d4e0640, type: 3}
       propertyPath: moveSpeed
       value: 8
       objectReference: {fileID: 0}

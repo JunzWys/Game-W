@@ -34,12 +34,12 @@ public class BoardManager : MonoBehaviour
     private Item[,] grid;
     private Item selectedItem = null;
     private bool isBoardBusy = false;
+    private bool isGameWon = false; // NEW: Flag to ensure WinGame is called only once.
     private float offsetX;
     private float offsetY;
 
     void Start()
     {
-        // Calculate offsets to center the board at (0,0) in local space
         float boardVisualWidth = (width - 1) * itemSpacing;
         float boardVisualHeight = (height - 1) * itemSpacing;
         offsetX = -boardVisualWidth / 2f;
@@ -52,6 +52,7 @@ public class BoardManager : MonoBehaviour
     IEnumerator InitializeBoard()
     {
         isBoardBusy = true;
+        isGameWon = false; // Reset win flag on initialize.
         currentScore = 0;
         UpdateScoreUI();
         yield return StartCoroutine(SetupBoard());
@@ -157,7 +158,7 @@ public class BoardManager : MonoBehaviour
         yield return StartCoroutine(AnimateSwap(item1, item2));
         SwapGridPositions(item1, item2);
 
-        // 添加音效调用（玩家主动操作 → 传true）
+        // This call to your SoundManager is preserved.
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlayEliminationSound(true);
@@ -171,7 +172,6 @@ public class BoardManager : MonoBehaviour
         }
         else
         {
-            // 无匹配，交换回原位
             yield return StartCoroutine(AnimateSwap(item1, item2));
             SwapGridPositions(item1, item2);
         }
@@ -185,23 +185,16 @@ public class BoardManager : MonoBehaviour
         currentScore += count * scorePerItem;
         UpdateScoreUI();
 
-        // Ensure the win condition is checked only once per logical frame to avoid multiple triggers
-        if (currentScore >= targetScore && !isBoardBusy)
+        // CORRECTED LOGIC: Check for win condition using the dedicated 'isGameWon' flag.
+        if (currentScore >= targetScore && !isGameWon)
         {
+            isGameWon = true; // Set the flag immediately to prevent re-entry.
             WinGame();
         }
-        
-        // 新增：这里可以添加额外的连击逻辑（如果需要）
-        // 例如：SoundManager.Instance.UpdateCombo(count);
     }
 
     IEnumerator ProcessMatchesLoop(List<Item> initialMatchedItems)
     {
-        // 标记自动消除开始
-        // 原代码问题行：
-        // if (SoundManager.Instance != null && !initialMatchedItems.IsNullOrEmpty())
-
-        // 修正后：
         if (SoundManager.Instance != null && initialMatchedItems != null && initialMatchedItems.Count > 0)
         {
             SoundManager.Instance.PlayEliminationSound(false);
@@ -220,12 +213,10 @@ public class BoardManager : MonoBehaviour
             if (newCascadeMatches.Count > 0)
             {
                 ProcessClearedItems(newCascadeMatches.Count);
-                // 不需要再次调用PlayEliminationSound，因为在ClearItems中已经调用
             }
             currentMatches = newCascadeMatches;
         }
 
-        // 标记自动消除结束
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.MarkAutoMatchesFinished();
@@ -235,12 +226,12 @@ public class BoardManager : MonoBehaviour
     void WinGame()
     {
         Debug.Log("Target score reached! VICTORY!");
-        isBoardBusy = true; // Prevent any further actions
+        isBoardBusy = true;
 
         if (PlayerDataManager.Instance != null)
         {
             Debug.Log("[BoardManager] Granting upgrade and saving data due to victory.");
-            PlayerDataManager.Instance.GrantNextUpgrade(); // Grant upgrade ONLY on win
+            PlayerDataManager.Instance.GrantNextUpgrade();
             PlayerDataManager.Instance.SaveDataToFile();
         }
 
@@ -250,11 +241,10 @@ public class BoardManager : MonoBehaviour
     public void OnQuitButtonClicked()
     {
         Debug.Log("Quit button clicked. Returning to corridor WITHOUT granting upgrade.");
-        isBoardBusy = true; // Prevent any further actions
+        isBoardBusy = true;
 
         if (PlayerDataManager.Instance != null)
         {
-            // Save current state WITHOUT granting an upgrade
             PlayerDataManager.Instance.SaveDataToFile();
         }
 
@@ -312,7 +302,6 @@ public class BoardManager : MonoBehaviour
                     grid[item.x, item.y] = null;
                 }
 
-                // 添加音效调用（系统自动消除 → 传false）
                 if (SoundManager.Instance != null)
                 {
                     SoundManager.Instance.PlayEliminationSound(false);
@@ -331,8 +320,7 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    // This method is no longer strictly necessary for this script, but kept for potential future use or if other scripts call it.
-    void UpdateBulletUI() { }
+    void UpdateBulletUI() { } // This is intentionally left empty as per our simplified design.
 
     bool CausesInitialMatch(int x, int y, Item.ItemType type)
     {
@@ -346,10 +334,10 @@ public class BoardManager : MonoBehaviour
         string sceneName = SceneManager.GetActiveScene().name;
         return sceneName switch
         {
-            "_SceneXiao_duanwu" => (Item.ItemType)Random.Range(4, 8),   // duanwu1~duanwu4（枚举值 4~7）
-            "_SceneXiao_zhongqiu" => (Item.ItemType)Random.Range(8, 12),  // zhongqiu1~zhongqiu4（枚举值 8~11）
-            "_SceneXiao_yuanxiao" => (Item.ItemType)Random.Range(12, 16), // yuanxiao1~yuanxiao4（枚举值 12~15）
-            _ => (Item.ItemType)Random.Range(0, 4)    // 原场景（Lantern~Fan，枚举值 0~3）
+            "_SceneXiao_duanwu" => (Item.ItemType)Random.Range(4, 8),
+            "_SceneXiao_zhongqiu" => (Item.ItemType)Random.Range(8, 12),
+            "_SceneXiao_yuanxiao" => (Item.ItemType)Random.Range(12, 16),
+            _ => (Item.ItemType)Random.Range(0, 4)
         };
     }
 
